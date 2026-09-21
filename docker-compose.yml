@@ -1,0 +1,27 @@
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: gwc
+      POSTGRES_USER: ${DATABASE_USER:-gwc}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:?set DATABASE_PASSWORD}
+    volumes: [postgres_data:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL","pg_isready -U ${DATABASE_USER:-gwc} -d gwc"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+  backend:
+    build: ./backend
+    environment:
+      DATABASE_URL: jdbc:postgresql://db:5432/gwc
+      DATABASE_USER: ${DATABASE_USER:-gwc}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      JWT_SECRET_BASE64: ${JWT_SECRET_BASE64}
+      JWT_ISSUER: ${JWT_ISSUER:-grow-with-code}
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:5173}
+    ports: ["8080:8080"]
+    depends_on:
+      db: {condition: service_healthy}
+    restart: unless-stopped
+volumes: {postgres_data: {}}

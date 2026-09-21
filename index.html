@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050805">
+  <title>Grow With Code — Java Spring</title>
+  <link rel="stylesheet" href="style.css">
+<link rel="manifest" href="manifest.webmanifest"></head>
+<body>
+  <!-- Screen 1: only the falling leaf -->
+  <section id="intro" class="intro-screen" aria-label="Вступ">
+    <button id="leafButton" class="leaf-button" aria-label="Відкрити курс">
+      <img src="assets/leaf.png" alt="Зелений листок" class="leaf">
+      <span class="leaf-shadow"></span>
+    </button>
+  </section>
+
+  <div id="authModal" class="auth-modal" aria-hidden="true">
+    <div class="auth-card">
+      <img src="assets/leaf.png" alt="" class="auth-leaf">
+      <div class="eyebrow">GROW WITH CODE</div>
+      <h2 id="authTitle">Увійти</h2>
+      <p id="authSubtitle">Прогрес синхронізується між пристроями через твій акаунт.</p>
+      <input id="authDisplayName" class="dark-input auth-register-only" placeholder="Ім'я або нік">
+      <input id="authEmail" class="dark-input" type="email" placeholder="Email" autocomplete="email">
+      <input id="authPassword" class="dark-input" type="password" placeholder="Пароль (мінімум 10 символів)" autocomplete="current-password">
+      <div id="authStatus" class="auth-status"></div>
+      <button id="authSubmit" class="primary-btn auth-submit">Увійти</button>
+      <button id="authSwitch" class="text-btn auth-switch">Немає акаунта? Зареєструватися</button>
+      <button id="offlineDemoBtn" class="secondary-btn auth-offline">Продовжити локально</button>
+    </div>
+  </div>
+
+  <!-- Screen 2: course -->
+  <main id="app" class="app is-hidden">
+    <header class="topbar">
+      <div class="brand">
+        <img src="assets/leaf.png" alt="" class="brand-leaf">
+        <span>GROW<br>WITH CODE</span>
+      </div>
+
+      <nav class="tabs" aria-label="Навігація">
+        <button class="tab active" data-tab="course">Курс</button>
+        <button class="tab" data-tab="tasks">Завдання</button>
+        <button class="tab" data-tab="progress">Прогрес</button>
+        <button class="tab" data-tab="community">Спільнота</button>
+        <button class="tab game-tab" data-tab="game">Грати</button>
+        <button class="tab" data-tab="practice">Практика</button>
+        <button class="tab" data-tab="cheatsheet">Шпаргалка</button>
+<button class="tab" data-tab="achievements">Досягнення</button><button class="tab" data-tab="portfolio">Портфоліо</button><button class="tab" data-tab="profile">Профіль</button>
+      </nav>
+
+      <div class="account-area">
+        <span id="accountName">LOCAL MODE</span>
+        <button id="accountButton" class="account-btn">Увійти</button>
+      </div>
+    </header>
+
+    <section class="view active" id="courseView">
+      <div class="hero-copy">
+        <div class="eyebrow">JAVA SPRING</div>
+        <h1>Від нуля<br>до першого<br><span>проєкту</span></h1>
+        <p>Практичний курс, який крок за кроком веде від Java Core до першого REST API на Spring Boot.</p>
+        <button id="continueBtn" class="primary-btn">Продовжити навчання <span>→</span></button>
+
+        <blockquote>
+          Краще писати код сьогодні,<br>ніж мріяти про нього завтра.
+          <small>/ YOUR FUTURE SELF</small>
+        </blockquote>
+      </div>
+
+      <div class="course-column">
+        <div class="section-kicker">ПЛАН КУРСУ</div>
+        <div class="filter-row" id="courseFilters">
+          <button class="filter-chip active" data-filter="all">Усі</button>
+          <button class="filter-chip" data-filter="Java Core">Java Core</button>
+          <button class="filter-chip" data-filter="OOP">OOP</button>
+          <button class="filter-chip" data-filter="Spring Boot">Spring Boot</button>
+        </div>
+        <div id="moduleList" class="module-list"></div>
+      </div>
+
+      <aside class="side-column">
+        <div class="panel progress-panel">
+          <div class="panel-head">
+            <span>ТВІЙ ПРОГРЕС</span>
+            <span id="progressCount">0 з 13</span>
+          </div>
+
+          <div class="progress-inner">
+            <div class="ring" id="progressRing">
+              <span id="progressPercent">0%</span>
+            </div>
+            <div>
+              <h3 id="progressTitle">Починаємо</h3>
+              <p id="progressText">Обери перший модуль і рухайся по одному кроку.</p>
+            </div>
+          </div>
+          <div class="xp-mini">
+            <div><span>LEVEL</span><b id="miniLevel">1</b></div>
+            <div class="xp-track"><i id="miniXpBar"></i></div>
+            <small id="miniXpText">0 XP</small>
+          </div>
+        </div>
+
+        <div class="panel quick-tasks">
+          <div class="panel-head">
+            <span>ПРАКТИЧНІ ЗАВДАННЯ</span>
+            <span id="taskMiniCount">0 з 5</span>
+          </div>
+          <div id="quickTaskList"></div>
+        </div>
+
+        <div class="panel quote-card">
+          <img src="assets/leaf.png" alt="">
+          <div></div>
+          <p>Кожен експерт<br>колись був новачком.</p>
+        </div>
+      </aside>
+    </section>
+
+    <section class="view" id="tasksView">
+      <div class="page-head">
+        <div>
+          <div class="eyebrow">ПРАКТИКА</div>
+          <h2>Завдання</h2>
+        </div>
+        <p>Кожне завдання прив’язане до конкретного уроку. Можна одразу повернутись до теорії.</p>
+      </div>
+      <div class="filter-row wide" id="taskFilters">
+        <button class="filter-chip active" data-filter="all">Усі</button>
+        <button class="filter-chip" data-filter="Java Core">Java Core</button>
+        <button class="filter-chip" data-filter="OOP">OOP</button>
+        <button class="filter-chip" data-filter="Spring Boot">Spring Boot</button>
+      </div>
+      <div id="allTasks" class="task-grid"></div>
+    </section>
+
+    <section class="view" id="progressView">
+      <div class="page-head">
+        <div>
+          <div class="eyebrow">СТАТИСТИКА</div>
+          <h2>Твій прогрес</h2>
+        </div>
+        <p>Сайт автоматично пам'ятає завершені уроки і завдання у цьому браузері.</p>
+      </div>
+
+      <div class="progress-actions">
+        <button id="exportJsonBtn" class="secondary-btn">Експорт JSON</button>
+        <button id="exportPdfBtn" class="secondary-btn">Експорт PDF</button>
+        <button id="resetBtn" class="danger-btn">Скинути прогрес</button>
+      </div>
+
+      <div class="stats-grid">
+        <div class="big-stat">
+          <span>Модулі</span>
+          <strong id="statModules">0/13</strong>
+        </div>
+        <div class="big-stat">
+          <span>Завдання</span>
+          <strong id="statTasks">0/13</strong>
+        </div>
+        <div class="big-stat">
+          <span>Загальний прогрес</span>
+          <strong id="statOverall">0%</strong>
+        </div>
+        <div class="big-stat">
+          <span>Час навчання</span>
+          <strong id="statTime">0 хв</strong>
+        </div>
+        <div class="big-stat">
+          <span>Streak</span>
+          <strong id="statStreak">0 днів</strong>
+        </div>
+        <div class="big-stat">
+          <span>Consistency</span>
+          <strong id="statConsistency">0/7</strong>
+        </div>
+      </div>
+
+
+      <div class="game-sync-grid">
+        <div class="panel gamification-panel">
+          <div class="panel-head"><span>XP ТА ВІХИ</span><span id="levelLabel">LEVEL 1</span></div>
+          <div class="xp-hero"><strong id="xpTotal">0 XP</strong><span id="xpNext">До наступного рівня: 300 XP</span></div>
+          <div class="xp-track large"><i id="xpBar"></i></div>
+          <div id="badgeGrid" class="badge-grid"></div>
+        </div>
+        <div class="panel sync-panel">
+          <div class="panel-head"><span>АКАУНТ + CLOUD SYNC</span><span id="syncStatus">offline</span></div>
+          <p id="syncDescription">Увійди в акаунт — прогрес буде автоматично синхронізуватися з PostgreSQL через захищений JWT API.</p>
+          <div class="sync-actions">
+            <button id="cloudSaveBtn" class="primary-btn">Синхронізувати зараз</button>
+            <button id="cloudLoadBtn" class="secondary-btn">Завантажити з хмари</button>
+          </div>
+          <small>Якщо backend недоступний, навчання продовжується локально через localStorage.</small>
+        </div>
+      </div>
+
+      <div class="analytics-grid">
+        <div class="panel">
+          <div class="panel-head"><span>ЧАС ПО МОДУЛЯХ</span><span id="timeSummary">0 хв</span></div>
+          <div id="timeChart" class="time-chart"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><span>НАЙСКЛАДНІШІ УРОКИ</span><span>за оцінкою/часом</span></div>
+          <div id="hardLessons"></div>
+        </div>
+      </div>
+
+      <div class="panel progress-detail">
+        <div class="panel-head">
+          <span>НАВЧАЛЬНИЙ ШЛЯХ</span>
+          <span>автозбереження увімкнено</span>
+        </div>
+        <div id="progressModules"></div>
+      </div>
+
+      <div id="printReport" class="print-report"></div>
+    </section>
+
+
+    <section class="view" id="communityView">
+      <div class="page-head">
+        <div><div class="eyebrow">COMMUNITY</div><h2>Спільнота</h2></div>
+        <p>Питання по уроках, обговорення та просте peer review коду. З backend дані спільні між пристроями; без нього працює локальний demo-режим.</p>
+      </div>
+      <div class="community-grid">
+        <div class="panel">
+          <div class="panel-head"><span>ОБГОВОРЕННЯ УРОКУ</span><span id="discussionMode">local</span></div>
+          <select id="communityModuleSelect" class="dark-input"></select>
+          <div id="communityComments" class="comment-feed"></div>
+          <div class="comment-compose">
+            <textarea id="communityCommentInput" placeholder="Напиши питання або пояснення для інших студентів..."></textarea>
+            <button id="postCommentBtn" class="primary-btn">Опублікувати</button>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><span>PEER CODE REVIEW</span><span>код + відгуки</span></div>
+          <select id="reviewModuleSelect" class="dark-input"></select>
+          <input id="reviewTitleInput" class="dark-input" placeholder="Що хочеш перевірити?">
+          <textarea id="reviewCodeInput" class="review-code" placeholder="Встав свій Java-код..."></textarea>
+          <button id="postReviewBtn" class="primary-btn">Надіслати на review</button>
+          <div id="reviewFeed" class="review-feed"></div>
+          <button id="loadMoreReviewsBtn" class="secondary-btn review-more hidden">Завантажити ще</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="view game-view" id="gameView">
+      <div class="game-shell"><div class="game-modebar"><div><button class="mode-btn active" data-mode="normal">Навчання</button><button class="mode-btn" data-mode="master">Мастер +50 XP</button><button class="mode-btn" data-mode="editor">Редактор місій</button></div><div id="gameRecord">Рекорд: —</div></div><div id="missionStory" class="mission-story"></div><div id="missionEditor" class="mission-editor hidden"><h3>Конструктор місії JSON</h3><textarea id="missionJson">{"title":"Моя місія","text":"Збери ресурси","start":[0,4,"E"],"base":[4,4],"walls":[[2,4]],"resources":[[1,4],[3,4]],"goal":"allResourcesBase"}</textarea><div class="game-controls"><button id="saveUserMission" class="primary-btn">Зберегти</button><button id="loadUserMission" class="secondary-btn">Тестувати</button></div><div id="userMissionList"></div></div>
+        <div class="game-top"><div><div class="eyebrow">JAVA: МІСТО РОБОТІВ</div><h2 id="gameMissionTitle">Місія 1</h2><p id="gameMissionText"></p></div>
+          <div class="game-progress"><span id="gameProgressText">1 / 10</span><div class="game-progress-track"><i id="gameProgressBar"></i></div></div></div>
+        <div class="robot-game-layout">
+          <div class="city-panel panel"><div class="panel-head"><span>МІСТО 5×5</span><span id="robotStatus">готовий</span></div><div class="robot-grid-wrap"><div id="robotGrid" class="robot-grid"></div><svg id="robotPathSvg" class="robot-path-svg" viewBox="0 0 500 500"></svg></div>
+            <div class="city-legend"><span>🤖 робот</span><span>⚙️ деталь</span><span>🏠 база</span><span>🧱 перешкода</span></div></div>
+          <div class="robot-code-panel panel"><div class="panel-head"><span>JAVA-КОД</span><span>навчальна підмножина</span></div>
+            <div class="code-editor-wrap"><div id="robotLineNumbers" class="robot-line-numbers">1</div><textarea id="robotCode" class="robot-code-editor" spellcheck="false"></textarea></div>
+            <div class="mobile-codebar"><button data-insert="for (int i = 0; i < 3; i++) {\n    \n}">for</button><button data-insert="if (robot.isPathClear()) {\n    \n}">if</button><button data-insert="class ">class</button><button data-insert="System.out.println();">println</button><button id="swapGamePanels">⇄</button></div><div class="game-controls"><button id="robotRun" class="primary-btn">▶ Запустити</button><button id="robotStop" class="secondary-btn">■ Зупинити</button><button id="robotStep" class="secondary-btn">Наступний крок</button><button id="robotReset" class="secondary-btn">Скинути</button><button id="robotHint" class="secondary-btn">💡 Підказка</button></div>
+          </div>
+        </div>
+        <div class="game-meta-grid">
+          <div class="panel">
+            <div class="panel-head"><span>ДОСЯГНЕННЯ</span><span id="badgeCount">0 бейджів</span></div>
+            <div id="robotBadges" class="badge-grid"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><span>ЛІДЕРБОРД TOP-50</span><span>локально + cloud-ready</span></div>
+            <div id="robotLeaderboard" class="leaderboard"></div>
+          </div>
+        </div>
+        <div class="robot-info-grid">
+          <div class="panel"><div class="panel-head"><span>НАВЧАННЯ</span><span id="gameTopic">команди</span></div><div id="gameTheory" class="game-theory"></div><div id="gameHintBox" class="game-hint hidden"></div></div>
+          <div class="panel"><div class="panel-head"><span>КОНСОЛЬ</span><span>стан виконання</span></div><pre id="robotConsole" class="robot-console">Напиши код і натисни «Запустити».</pre><div id="robotVariables" class="robot-vars"></div></div>
+        </div>
+        <div class="game-warning"><b>Важливо:</b> браузерна версія використовує власний інтерпретатор навчальної підмножини Java: <code>robot.*</code>, <code>for</code> та <code>if/else</code>. Це не повна JVM. Для повного Java потрібен окремий обмежений backend runner без доступу до мережі та файлів.</div>
+      </div>
+    </section>
+
+
+    <section class="view" id="practiceView">
+      <div class="content-wrap practice-page">
+        <div class="section-head"><div><div class="eyebrow">PORTFOLIO LAB</div><h2>Практика на реальних проєктах</h2><p>Не просто вправи — збирай проєкти, які можна показати на GitHub та співбесіді.</p></div></div>
+        <div id="practiceProjects" class="project-grid"></div>
+      </div>
+    </section>
+
+    <section class="view" id="cheatsheetView">
+      <div class="content-wrap cheatsheet-page">
+        <div class="section-head cheat-head"><div><div class="eyebrow">QUICK REFERENCE</div><h2>Java + Spring шпаргалка</h2><p>Основний синтаксис на одній сторінці. Працює офлайн після завантаження сайту.</p></div>
+          <div class="cheat-actions"><button id="printCheat" class="primary-btn">Друкувати / PDF</button></div></div>
+        <div id="cheatContent" class="cheat-grid"></div>
+      </div>
+    </section>
+
+<section class="view" id="achievementsView"><div class="content-wrap"><div class="section-head"><div><div class="eyebrow">MILESTONES</div><h2>Досягнення</h2><p>Секретні бейджі відкриваються під час навчання.</p></div></div><div id="achievementTimeline" class="achievement-timeline"></div></div></section>
+<section class="view" id="portfolioView"><div class="content-wrap"><div class="section-head"><div><div class="eyebrow">10 MINI PROJECTS</div><h2>Портфоліо</h2><p id="portfolioSummary"></p></div><div class="cheat-actions"><button id="exportGithubReadme" class="secondary-btn">GitHub README</button><button id="exportProgressHtml" class="secondary-btn">HTML</button><button id="exportProgressCsv" class="secondary-btn">CSV</button><button id="exportProgressJson" class="secondary-btn">JSON</button><button id="certificateBtn" class="primary-btn">Сертифікат</button></div></div><div id="portfolioProjects" class="portfolio-grid"></div></div></section>
+<section class="view" id="profileView"><div class="content-wrap"><div class="profile-card panel"><div id="profileAvatar" class="profile-avatar">GW</div><div class="profile-fields"><input id="profileNick" placeholder="Нік"><input id="profileBio" placeholder="Біографія"><input id="profileGithub" placeholder="GitHub username"><button id="saveProfile" class="primary-btn">Зберегти</button></div><div id="profileStats" class="profile-stats"></div></div><div class="panel settings-panel"><div class="panel-head"><span>НАЛАШТУВАННЯ</span></div><label>Схема <select id="colorScheme"><option value="green">Green Terminal</option><option value="purple">Purple Hacker</option><option value="ocean">Ocean Blue</option><option value="forest">Forest Dark</option><option value="light">Light & Clean</option></select></label><label>Шрифт <select id="fontSizeSetting"><option value="small">Малий</option><option value="normal">Нормальний</option><option value="large">Великий</option></select></label><label>Табуляція <select id="tabSizeSetting"><option value="2">2</option><option value="4">4</option></select></label><label><input type="checkbox" id="soundSetting"> Звуки</label></div><div class="panel"><div class="panel-head"><span>ЛОКАЛЬНИЙ TOP-50</span></div><div class="rank-submit"><input id="rankNick" placeholder="Нік"><button id="submitRank" class="primary-btn">Подати результат</button></div><div id="playerLeaderboard"></div></div></div></section>
+<aside id="helpBot" class="help-bot hidden"><div class="help-head"><strong>Grow AI · Допомога</strong><button id="closeHelpBot">×</button></div><div id="helpMessages" class="help-messages"><div class="bot-msg">Пояснюю напрямок, але не даю готового рішення.</div></div><div class="help-quick"><button data-q="error">Поясни помилку</button><button data-q="loop">Цикл for</button><button data-q="review">Перевір код</button><button data-q="oop">OOP</button></div><textarea id="helpInput"></textarea><button id="sendHelp" class="primary-btn">Запитати <span id="helpLimit">5/5</span></button></aside>
+    <!-- Lesson drawer -->
+    <div id="lessonOverlay" class="lesson-overlay" aria-hidden="true">
+      <article class="lesson-drawer">
+        <button id="closeLesson" class="close-btn" aria-label="Закрити">×</button>
+        <div id="lessonNumber" class="lesson-number">01</div>
+        <div id="lessonCategory" class="eyebrow">JAVA</div>
+        <h2 id="lessonTitle"></h2>
+        <p id="lessonIntro" class="lesson-intro"></p>
+
+        <div class="lesson-block lesson-theory">
+          <h3>Конспект уроку</h3>
+          <div id="lessonContent" class="lesson-content-copy"></div>
+        </div>
+
+        <div class="lesson-block">
+          <h3>Що треба зрозуміти</h3>
+          <ul id="lessonPoints"></ul>
+        </div>
+
+        <div class="code-box">
+          <div class="code-top"><span></span><span></span><span></span><b>Main.java</b></div>
+          <pre><code id="lessonCode"></code></pre>
+        </div>
+
+        <div class="lesson-block ide-block">
+          <div class="lesson-block-head">
+            <div><h3>Java IDE</h3><small>Код запускається на нашому backend у тимчасовому Docker sandbox без мережі.</small></div>
+            <div class="editor-actions">
+              <button id="loadStarterCode" class="secondary-btn small-btn">Вставити приклад</button>
+              <button id="runCodeBtn" class="primary-btn small-btn">▶ Запустити</button>
+            </div>
+          </div>
+          <textarea id="javaEditor" class="native-java-editor" spellcheck="false" aria-label="Java editor"></textarea>
+          <div class="runner-meta"><span id="codeRunStatus">Готово до запуску</span><span>Java 21 · network off · 128 MB RAM</span></div>
+          <pre id="codeOutput" class="code-output">Результат з'явиться тут.</pre>
+        </div>
+
+        <div class="lesson-block task-link-block">
+          <div class="lesson-block-head">
+            <h3>Практика до цього уроку</h3>
+            <button id="lessonTaskToggle" class="task-check">Позначити виконаним</button>
+          </div>
+          <p id="lessonTask"></p>
+        </div>
+
+        <div class="lesson-block">
+          <h3>Матеріали</h3>
+          <div id="lessonResources" class="resource-grid"></div>
+        </div>
+
+        <div class="lesson-block">
+          <div class="lesson-block-head">
+            <h3>Мої нотатки</h3>
+            <span id="notesStatus" class="save-status">Збережено</span>
+          </div>
+          <textarea id="lessonNotes" class="notes-area" placeholder="Запиши свої думки, питання або важливі моменти з уроку..."></textarea>
+        </div>
+
+
+        <div class="lesson-block quiz-block">
+          <div class="lesson-block-head">
+            <h3>Перевірка знань</h3>
+            <span id="quizStatus" class="quiz-status">Потрібно пройти</span>
+          </div>
+          <p class="quiz-help">Щоб завершити урок, дай правильні відповіді на всі питання.</p>
+          <form id="lessonQuiz" class="quiz-form"></form>
+          <button id="checkQuizBtn" class="secondary-btn">Перевірити тест</button>
+          <div id="quizResult" class="quiz-result"></div>
+        </div>
+
+        <div class="lesson-block lesson-discussion">
+          <div class="lesson-block-head"><h3>Обговорення цього уроку</h3><span id="lessonDiscussionMode" class="save-status">local</span></div>
+          <div id="lessonComments" class="comment-feed compact"></div>
+          <div class="comment-compose compact-compose">
+            <textarea id="lessonCommentInput" placeholder="Є питання по цьому уроку?"></textarea>
+            <button id="lessonCommentBtn" class="secondary-btn">Надіслати</button>
+          </div>
+        </div>
+
+        <div class="lesson-block">
+          <h3>Наскільки складно?</h3>
+          <div id="difficultyButtons" class="difficulty-row">
+            <button data-difficulty="1">Легко</button>
+            <button data-difficulty="2">Нормально</button>
+            <button data-difficulty="3">Складно</button>
+          </div>
+        </div>
+
+        <div class="lesson-actions">
+          <button id="completeLesson" class="primary-btn">Позначити урок пройденим</button>
+          <button id="nextLesson" class="secondary-btn">Наступний урок →</button>
+        </div>
+      </article>
+    </div>
+
+    <div id="resetModal" class="confirm-modal" aria-hidden="true">
+      <div class="confirm-card">
+        <div class="eyebrow">КЕРУВАННЯ ДАНИМИ</div>
+        <h3>Скинути весь прогрес?</h3>
+        <p>Буде видалено завершені уроки, завдання, тести, нотатки, XP, локальні обговорення, час навчання, streak і оцінки складності.</p>
+        <div class="confirm-actions">
+          <button id="cancelReset" class="secondary-btn">Скасувати</button>
+          <button id="confirmReset" class="danger-btn">Так, скинути все</button>
+        </div>
+      </div>
+    </div>
+  </main><button id="helpBotToggle" class="floating-help">?</button>
+
+  <script src="config.js"></script>
+<script src="script.js"></script>
+<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("./sw.js").catch(()=>{});</script></body>
+</html>
