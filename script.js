@@ -259,7 +259,7 @@ const state = {
   displayName:localStorage.getItem("gwc_displayName")||""
 };
 let courseFilter="all",taskFilter="all",lessonOpenedAt=null,notesTimer=null,syncTimer=null;
-const API_BASE = window.GWC_CONFIG?.API_BASE || (location.protocol === "file:" ? "http://localhost:8080/api" : "/api");
+const API_BASE = location.protocol === "file:" ? "http://localhost:8080/api" : "/api";
 
 function save(){
   localStorage.setItem("gwc_modules",JSON.stringify(state.completedModules)); localStorage.setItem("gwc_tasks",JSON.stringify(state.completedTasks));
@@ -285,7 +285,7 @@ function badges(){
   ];
 }
 
-$("#leafButton").addEventListener("click",()=>launchApp(false)); if(localStorage.getItem("gwc_introSeen")==="1")setTimeout(()=>launchApp(true),30);
+$("#leafButton").addEventListener("click",()=>launchApp(false));
 
 function groupMatches(group,filter){return filter==="all"||group===filter}
 function renderModules(){const list=$("#moduleList");list.innerHTML="";modules.forEach((m,i)=>{if(!groupMatches(m.group,courseFilter))return;const done=state.completedModules.includes(i);const b=document.createElement("button");b.className="module"+(i===state.lastModule?" active":"")+(done?" done":"");b.innerHTML=`<span class="num">${done?"✓":i+1}</span><span class="module-copy"><strong>${m.title}</strong><small>${m.group} · ${m.subtitle}</small></span><span class="arrow">→</span>`;b.onclick=()=>openLesson(i);list.appendChild(b)})}
@@ -510,7 +510,7 @@ function launchApp(skip=false){
   const intro=$("#intro"),app=$("#app");
   const finish=()=>{intro.classList.add("exit");app.classList.remove("is-hidden");updateAccountUi();if(!isAuthenticated()&&!state.offlineDemo)setTimeout(()=>showAuth("login"),180)};
   if(skip){finish();return;}
-  $("#leafButton").classList.add("fly");localStorage.setItem("gwc_introSeen","1");setTimeout(finish,650);
+  $("#leafButton").classList.add("fly");setTimeout(finish,650);
 }
 
 async function api(path,options={}){
