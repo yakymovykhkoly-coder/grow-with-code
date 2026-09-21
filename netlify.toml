@@ -5,6 +5,12 @@
 [build.environment]
   NODE_VERSION = "22"
 
+[[redirects]]
+  from = "/api/*"
+  to = "https://backend-current-production.up.railway.app/api/:splat"
+  status = 200
+  force = true
+
 [[headers]]
   for = "/*"
   [headers.values]
@@ -16,9 +22,14 @@
 [[headers]]
   for = "/sw.js"
   [headers.values]
-    Cache-Control = "no-cache"
+    Cache-Control = "no-cache, no-store, must-revalidate"
 
 [[headers]]
   for = "/config.js"
   [headers.values]
-    Cache-Control = "no-store"
+    Cache-Control = "no-cache, no-store, must-revalidate"
+
+[[headers]]
+  for = "/script.js"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
