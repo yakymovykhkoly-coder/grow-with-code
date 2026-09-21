@@ -1,13 +1,6 @@
-FROM maven:3.9-eclipse-temurin-21 AS build
-WORKDIR /app
-COPY pom.xml .
-RUN mvn -q -DskipTests dependency:go-offline
-COPY src src
-RUN mvn -q -DskipTests package
-FROM eclipse-temurin:21-jre
-RUN useradd -r -u 10001 app
-WORKDIR /app
-COPY --from=build /app/target/backend-1.0.0.jar app.jar
-USER app
+FROM nginx:1.27-alpine
+COPY index.html style.css script.js config.js manifest.webmanifest sw.js /usr/share/nginx/html/
+COPY assets /usr/share/nginx/html/assets
+COPY nginx.frontend.conf /etc/nginx/conf.d/default.conf
 EXPOSE 8080
-ENTRYPOINT ["java","-XX:MaxRAMPercentage=75","-jar","app.jar"]
+CMD ["nginx","-g","daemon off;"]
