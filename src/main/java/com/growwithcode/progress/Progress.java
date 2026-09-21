@@ -1,0 +1,2 @@
+package com.growwithcode.progress;import jakarta.persistence.*;import java.time.Instant;
+@Entity @Table(name="user_progress") public class Progress{@Id @Column(name="user_id") Long userId;@Lob @Column(nullable=false) String payload="{}";@Column(name="updated_at",nullable=false) Instant updatedAt=Instant.now();protected Progress(){}public Progress(Long id,String p){userId=id;payload=p;}public String getPayload(){return payload;}public void setPayload(String p){payload=p;updatedAt=Instant.now();}}

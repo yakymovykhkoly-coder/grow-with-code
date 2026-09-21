@@ -1,0 +1,4 @@
+package com.growwithcode.progress;import org.springframework.security.oauth2.jwt.Jwt;import org.springframework.security.core.annotation.AuthenticationPrincipal;import org.springframework.web.bind.annotation.*;
+@RestController @RequestMapping("/api/progress") public class ProgressController{private final ProgressRepository repo;ProgressController(ProgressRepository r){repo=r;}
+@GetMapping public String get(@AuthenticationPrincipal Jwt jwt){Long id=Long.valueOf(jwt.getSubject());return repo.findById(id).map(Progress::getPayload).orElse("{}");}
+@PutMapping public String put(@AuthenticationPrincipal Jwt jwt,@RequestBody String body){if(body.length()>200_000)throw new IllegalArgumentException("Progress too large");Long id=Long.valueOf(jwt.getSubject());var p=repo.findById(id).orElseGet(()->new Progress(id,"{}"));p.setPayload(body);repo.save(p);return body;}}

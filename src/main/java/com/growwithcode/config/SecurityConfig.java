@@ -1,0 +1,10 @@
+package com.growwithcode.config;
+import java.util.Base64;import javax.crypto.SecretKey;import javax.crypto.spec.SecretKeySpec;
+import org.springframework.beans.factory.annotation.Value;import org.springframework.context.annotation.*;import org.springframework.security.config.annotation.web.builders.HttpSecurity;import org.springframework.security.config.http.SessionCreationPolicy;import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;import org.springframework.security.crypto.password.PasswordEncoder;import org.springframework.security.oauth2.jwt.*;import org.springframework.security.web.SecurityFilterChain;import org.springframework.web.cors.*;import java.util.List;
+@Configuration public class SecurityConfig{
+@Bean PasswordEncoder passwordEncoder(){return new BCryptPasswordEncoder(12);}
+@Bean JwtEncoder jwtEncoder(@Value("${app.jwt-secret-base64}") String raw){byte[] k=Base64.getDecoder().decode(raw);if(k.length<32)throw new IllegalStateException("JWT secret must be at least 256 bits");SecretKey key=new SecretKeySpec(k,"HmacSHA256");return NimbusJwtEncoder.withSecretKey(key).build();}
+@Bean JwtDecoder jwtDecoder(@Value("${app.jwt-secret-base64}") String raw){SecretKey key=new SecretKeySpec(Base64.getDecoder().decode(raw),"HmacSHA256");return NimbusJwtDecoder.withSecretKey(key).build();}
+@Bean CorsConfigurationSource cors(@Value("${app.cors-origin}") String origin){var c=new CorsConfiguration();c.setAllowedOrigins(List.of(origin));c.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));c.setAllowedHeaders(List.of("Authorization","Content-Type"));c.setAllowCredentials(false);var s=new UrlBasedCorsConfigurationSource();s.registerCorsConfiguration("/api/**",c);return s;}
+@Bean SecurityFilterChain security(HttpSecurity h)throws Exception{return h.csrf(c->c.disable()).cors(c->{}).sessionManagement(s->s.sessionCreationPolicy(SessionCreationPolicy.STATELESS)).authorizeHttpRequests(a->a.requestMatchers("/api/auth/**","/actuator/health").permitAll().requestMatchers("/api/**").authenticated().anyRequest().denyAll()).oauth2ResourceServer(o->o.jwt(j->{})).build();}
+}
