@@ -259,7 +259,7 @@ const state = {
   displayName:localStorage.getItem("gwc_displayName")||""
 };
 let courseFilter="all",taskFilter="all",lessonOpenedAt=null,notesTimer=null,syncTimer=null;
-const API_BASE = location.protocol === "file:" ? "http://localhost:8080/api" : "/api";
+const API_BASE = window.GWC_CONFIG?.API_BASE || (location.protocol === "file:" ? "http://localhost:8080/api" : "/api");
 
 function save(){
   localStorage.setItem("gwc_modules",JSON.stringify(state.completedModules)); localStorage.setItem("gwc_tasks",JSON.stringify(state.completedTasks));
